@@ -1,20 +1,31 @@
 import styled from "styled-components";
 
-const StyledHeader = styled.div`
+const StyledHeader = styled.header`
   text-align: center;
   padding: 20px;
-  background-color: #2193b0; // Cool blue, same as primary color
-  color: #fff; // White text for contrast
-  font-size: 22px;
-  font-weight: bold;
-  border-radius: 8px;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); // Subtle shadow for depth
-  margin-bottom: 20px;
-  transition: background-color 0.3s ease;
+  margin-bottom: 24px;
+`;
+
+const Title = styled.h1`
+  font-size: 28px;
+  font-weight: 600;
+  letter-spacing: -0.5px;
+  color: var(--text-primary);
+`;
+
+const Subtitle = styled.p`
+  font-size: 14px;
+  color: var(--text-muted);
+  margin-top: 4px;
 `;
 
 const Header = () => {
-  return <StyledHeader>My tasks</StyledHeader>;
+  return (
+    <StyledHeader>
+      <Title>my tasks</Title>
+      <Subtitle>stay on track</Subtitle>
+    </StyledHeader>
+  );
 };
 
 export default Header;

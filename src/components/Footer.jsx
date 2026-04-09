@@ -2,52 +2,29 @@ import styled from "styled-components";
 
 const StyledFooter = styled.footer`
   text-align: center;
-  padding: 20px;
-  background-color: #2193b0; // Cool blue, same as primary color
-  color: #fff; // White text for contrast
-  font-size: 12px;
-  border-radius: 8px;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); // Subtle shadow for depth
-  margin-bottom: 20px;
-  transition: background-color 0.3s ease;
-`;
+  padding: 24px 0 8px;
+  font-size: 13px;
+  color: var(--text-muted);
 
-const StyledLink = styled.a`
-  color: #ff2;
-  text-decoration: none;
-  margin: 0 5px;
+  a {
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: color var(--transition);
 
-  &:hover {
-    color: #ff2;
-    text-decoration: underline;
-  }
-
-  &:visited {
-    color: #ff2;
-    text-decoration: underline;
+    &:hover {
+      color: var(--accent);
+    }
   }
 `;
 
 const Footer = () => {
   return (
     <StyledFooter>
-      &copy; 2023 TO-DO App, by
-      <StyledLink
-        href="https://github.com/Calleobe"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        Carl Öberg
-      </StyledLink>
-      &
-      <StyledLink
-        href="https://github.com/fabio-cassisa"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        Fabio Cassisa.
-      </StyledLink>
-      Technigo 2023.
+      <p>
+        built by{" "}
+        <a href="https://github.com/Calleobe">Carl Öberg</a> &{" "}
+        <a href="https://github.com/fabio-cassisa">Fabio Cassisa</a>
+      </p>
     </StyledFooter>
   );
 };

@@ -3,45 +3,53 @@ import styled from "styled-components";
 import { useDispatch } from "react-redux";
 import { addTask } from "../reducers/tasks";
 
-const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 20px;
-`;
-
 const Form = styled.form`
   display: flex;
-  align-items: center;
-  gap: 5px;
+  gap: 8px;
+  margin-bottom: 20px;
 `;
 
 const Input = styled.input`
   flex: 1;
-  padding: 10px;
-  border: 2px solid #ddd;
-  border-radius: 8px;
-  font-size: 16px;
+  padding: 12px 14px;
+  font-size: 15px;
+  font-family: var(--font);
+  background: var(--bg-card);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  outline: none;
+  transition: border-color var(--transition), box-shadow var(--transition);
+
+  &::placeholder {
+    color: var(--text-muted);
+  }
+
+  &:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-dim);
+  }
 `;
 
 const Button = styled.button`
-  padding: 10px 20px;
-  background-color: #2193b0;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.16);
-  cursor: pointer;
+  padding: 12px 20px;
   font-size: 14px;
-  font-family: "Helvetica Neue", sans-serif;
-  transition: transform 0.2s ease-in-out, background-color 0.2s;
+  font-weight: 600;
+  font-family: var(--font);
+  background: var(--accent);
+  color: var(--bg-primary);
+  border: none;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: background var(--transition), transform var(--transition);
+  white-space: nowrap;
 
   &:hover {
-    background-color: #6dd5ed;
-    transform: scale(1.05);
+    background: var(--accent-hover);
   }
 
   &:active {
-    transform: scale(0.95); /* Subtle click animation */
+    transform: scale(0.96);
   }
 `;
 
@@ -57,17 +65,15 @@ const AddTaskForm = () => {
   };
 
   return (
-    <Container>
-      <Form onSubmit={handleSubmit}>
-        <Input
-          type="text"
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-          placeholder="Add a new task..."
-        />
-        <Button type="submit">Add</Button>
-      </Form>
-    </Container>
+    <Form onSubmit={handleSubmit}>
+      <Input
+        type="text"
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+        placeholder="add a new task..."
+      />
+      <Button type="submit">Add</Button>
+    </Form>
   );
 };
 

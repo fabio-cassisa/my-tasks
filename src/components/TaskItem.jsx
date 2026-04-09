@@ -1,81 +1,129 @@
-// ... (import statements)
 import styled from "styled-components";
 import { useDispatch } from "react-redux";
 import { toggleTask, deleteTask } from "../reducers/tasks";
 import { format, parseISO } from "date-fns";
 
-const TaskContainer = styled.div`
+const Card = styled.div`
   display: flex;
   align-items: center;
-  background-color: ${(props) => (props.$complete ? "#6dd5ed" : "#fff")};
-  padding: 10px;
-  margin-top: 20px;
-  margin-bottom: 20px;
-  border-radius: 8px;
-  box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s;
+  gap: 12px;
+  padding: 14px;
+  margin-bottom: 8px;
+  background: ${(props) => (props.$complete ? "var(--bg-card-done)" : "var(--bg-card)")};
+  border: 1px solid ${(props) => (props.$complete ? "var(--border-done)" : "var(--border)")};
+  border-radius: var(--radius);
+  transition: all var(--transition);
+
+  &:hover {
+    background: ${(props) => (props.$complete ? "var(--bg-card-done)" : "var(--bg-hover)")};
+  }
 `;
 
-const Checkbox = styled.input`
-  margin-right: 15px;
-`;
-
-const TextContainer = styled.div`
-  flex: 1;
+const CheckboxWrapper = styled.label`
+  position: relative;
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+  cursor: pointer;
+`;
+
+const HiddenCheckbox = styled.input`
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+`;
+
+const StyledCheckbox = styled.span`
+  width: 22px;
+  height: 22px;
+  border-radius: var(--radius-sm);
+  border: 2px solid ${(props) => (props.$checked ? "var(--accent)" : "var(--border)")};
+  background: ${(props) => (props.$checked ? "var(--accent)" : "transparent")};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition);
+
+  &::after {
+    content: "${(props) => (props.$checked ? "✓" : "")}";
+    color: var(--bg-primary);
+    font-size: 14px;
+    font-weight: 700;
+  }
+
+  ${CheckboxWrapper}:hover & {
+    border-color: var(--accent);
+  }
+`;
+
+const TextGroup = styled.div`
+  flex: 1;
+  min-width: 0;
 `;
 
 const TaskText = styled.span`
+  display: block;
+  font-size: 15px;
+  line-height: 1.4;
   overflow-wrap: break-word;
+  color: ${(props) => (props.$complete ? "var(--text-done)" : "var(--text-primary)")};
+  text-decoration: ${(props) => (props.$complete ? "line-through" : "none")};
+  transition: color var(--transition);
 `;
 
 const TaskDate = styled.span`
   font-size: 12px;
-  color: #888;
+  color: var(--text-muted);
+  margin-top: 2px;
+  display: block;
 `;
 
 const DeleteButton = styled.button`
-  background-color: #ff6f61;
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  padding: 5px 10px;
-  margin-left: 10px;
+  padding: 6px 12px;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: var(--font);
+  color: var(--danger);
+  background: var(--danger-dim);
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
   cursor: pointer;
-  transition: background-color 0.3s;
+  flex-shrink: 0;
+  transition: all var(--transition);
 
   &:hover {
-    background-color: #ff9000;
+    background: var(--danger);
+    color: white;
+    border-color: var(--danger);
   }
 `;
 
 const TaskItem = ({ task }) => {
   const dispatch = useDispatch();
 
-  const handleToggle = () => {
-    dispatch(toggleTask(task.id));
-  };
-
-  const handleDelete = () => {
-    dispatch(deleteTask(task.id));
-  };
-
   return (
-    <TaskContainer $complete={task.complete}>
-      <Checkbox
-        type="checkbox"
-        checked={task.complete}
-        onChange={handleToggle}
-      />
-      <TextContainer>
-        <TaskText>{task.text}</TaskText>
-        <TaskDate>{format(parseISO(task.createdAt), "MM/dd HH:mm")}</TaskDate>
-      </TextContainer>
-      <DeleteButton onClick={handleDelete}>Delete</DeleteButton>
-    </TaskContainer>
+    <Card $complete={task.complete}>
+      <CheckboxWrapper>
+        <HiddenCheckbox
+          type="checkbox"
+          checked={task.complete}
+          onChange={() => dispatch(toggleTask(task.id))}
+        />
+        <StyledCheckbox $checked={task.complete} />
+      </CheckboxWrapper>
+      <TextGroup>
+        <TaskText $complete={task.complete}>{task.text}</TaskText>
+        <TaskDate>{format(parseISO(task.createdAt), "MMM d, HH:mm")}</TaskDate>
+      </TextGroup>
+      <DeleteButton onClick={() => dispatch(deleteTask(task.id))}>
+        Delete
+      </DeleteButton>
+    </Card>
   );
 };
 
 export default TaskItem;
-

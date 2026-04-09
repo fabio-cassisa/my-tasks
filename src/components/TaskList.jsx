@@ -3,129 +3,96 @@ import TaskItem from "./TaskItem";
 import styled from "styled-components";
 import { completeAllTasks } from "../reducers/tasks";
 
-const StyledTaskList = styled.div`
-  margin: 10px;
+const List = styled.div`
+  margin-bottom: 16px;
 `;
 
-const TaskData = styled.div`
+const StatusBar = styled.div`
   display: flex;
   justify-content: space-between;
-  font-size: 14px;
-  color: #fff;
-  font-weight: bold;
-
-  @media (max-width: 600px) {
-    font-size: 10px;
-  }
-
-  @media (min-width: 768px) {
-    font-size: 14px;
-  }
-
-  @media (min-width: 1024px) {
-    font-size: 14px;
-  }
-
-  @media (min-width: 1200px) {
-    font-size: 16px;
-  }
+  align-items: center;
+  padding: 12px 0;
+  border-top: 1px solid var(--border);
+  margin-top: 8px;
 `;
 
-const Completed = styled.div`
-  display: flex;
-  justify-content: center;
-  gap: 10px;
+const Counter = styled.span`
+  font-size: 13px;
+  color: var(--text-muted);
 `;
 
-const Counter = styled.div`
-  padding: 10px 20px;
-  background-color: #ddd;
-  color: black;
-  border: none;
-  border-radius: 8px;
-  box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.16);
-  font-size: 14px;
-  font-family: "Helvetica Neue", sans-serif;
-
-  @media (max-width: 600px) {
-    font-size: 10px;
-    padding: 5px 10px;
-  }
-
-  @media (min-width: 768px) {
-    font-size: 14px;
-  }
-
-  @media (min-width: 1024px) {
-    font-size: 14px;
-  }
-
-  @media (min-width: 1200px) {
-    font-size: 16px;
-  }
+const Accent = styled.span`
+  color: var(--accent);
+  font-weight: 600;
 `;
 
-const Button = styled.button`
-  padding: 10px 20px;
-  background-color: #2193b0;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.16);
+const CompleteAllButton = styled.button`
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: var(--font);
+  color: var(--accent);
+  background: var(--accent-dim);
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
   cursor: pointer;
-  font-size: 14px;
-  font-family: "Helvetica Neue", sans-serif;
-  transition: transform 0.2s ease-in-out, background-color 0.2s;
-
-  @media (max-width: 600px) {
-    font-size: 10px;
-    padding: 5px 10px;
-  }
-
-  @media (min-width: 768px) {
-    font-size: 14px;
-  }
-
-  @media (min-width: 1024px) {
-    font-size: 14px;
-  }
-
-  @media (min-width: 1200px) {
-    font-size: 16px;
-  }
+  transition: all var(--transition);
 
   &:hover {
-    background-color: #6dd5ed;
-    transform: scale(1.05);
+    background: var(--accent);
+    color: var(--bg-primary);
   }
 
   &:active {
-    transform: scale(0.95); /* Subtle click animation */
+    transform: scale(0.96);
   }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: default;
+    &:hover {
+      background: var(--accent-dim);
+      color: var(--accent);
+    }
+  }
+`;
+
+const EmptyState = styled.p`
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--text-muted);
+  font-size: 15px;
 `;
 
 const TaskList = () => {
   const dispatch = useDispatch();
   const tasks = useSelector((state) => state.tasks);
-  const completedTasksCount = tasks.filter((task) => task.complete).length;
-
-  const handleCompleteAll = () => {
-    dispatch(completeAllTasks());
-  };
+  const completedCount = tasks.filter((task) => task.complete).length;
+  const allDone = tasks.length > 0 && completedCount === tasks.length;
 
   return (
-    <StyledTaskList>
-      {tasks.map((task) => (
-        <TaskItem key={task.id} task={task} />
-      ))}
-      <TaskData>
-        <Counter>Total Tasks: {tasks.length}</Counter>
-        <Completed>
-          <Button onClick={handleCompleteAll}>Complete All</Button>
-          <Counter>Completed Tasks: {completedTasksCount}</Counter>
-        </Completed>
-      </TaskData>
-    </StyledTaskList>
+    <div>
+      <List>
+        {tasks.length === 0 ? (
+          <EmptyState>no tasks yet — add one above</EmptyState>
+        ) : (
+          tasks.map((task) => <TaskItem key={task.id} task={task} />)
+        )}
+      </List>
+      {tasks.length > 0 && (
+        <StatusBar>
+          <Counter>
+            <Accent>{completedCount}</Accent> / {tasks.length} completed
+          </Counter>
+          <CompleteAllButton
+            onClick={() => dispatch(completeAllTasks())}
+            disabled={allDone}
+          >
+            {allDone ? "All done ✓" : "Complete all"}
+          </CompleteAllButton>
+        </StatusBar>
+      )}
+    </div>
   );
 };
 
