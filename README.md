@@ -1,12 +1,12 @@
 # my tasks
 
-a minimal todo app with redux state management — add tasks, check them off, delete them, or nuke the list with "complete all".
+a task manager with priorities, drag-to-reorder, persistent storage, and a manual dark/light theme — built to feel like a real tool, not a tutorial exercise.
 
 ## context
 
-built as a pair project during the technigo bootcamp with [carl öberg](https://github.com/Calleobe). the original version used redux toolkit and styled-components but had a broken build (missing `date-fns` dependency), default browser checkboxes, and a flat grey design.
+originally built as a pair project during the technigo bootcamp with [carl öberg](https://github.com/Calleobe). the v1 used redux toolkit and styled-components but had a broken build, default browser checkboxes, and a flat grey design.
 
-this version fixes the build, strips out dead dependencies, and redesigns everything: dark-first theme with teal accent, custom checkboxes, strikethrough on completed tasks, and a clean status bar showing progress.
+v2.0 is a full rewrite: localStorage persistence so nothing is lost on refresh, three priority levels with colour-coded badges, drag-to-reorder via dnd-kit, manual theme toggle, keyboard shortcuts, and subtle entry animations. the redux store, component architecture, and CSS token system were all rebuilt from scratch.
 
 ## screenshots
 
@@ -16,33 +16,41 @@ this version fixes the build, strips out dead dependencies, and redesigns everyt
 
 ## stack
 
-`react 18` · `redux toolkit` · `styled-components 6` · `date-fns` · `vite 4` · `vercel`
+`react 18` · `redux toolkit 2` · `@dnd-kit/sortable` · `styled-components 6` · `date-fns` · `vite 6` · `vercel`
 
 ## features
 
-- **add / toggle / delete** — core crud via redux actions
-- **complete all** — one button to mark everything done (disables when all complete)
+- **localStorage persistence** — tasks survive page reload via custom redux middleware
+- **priority levels** — low / med / high with colour-coded badges; cycle priority inline when adding
+- **drag-to-reorder** — touch and pointer support via @dnd-kit with vertical axis lock
+- **theme toggle** — manual dark/light switch, persisted to localStorage, defaults to system preference
+- **clear completed** — remove all done tasks in one click
+- **complete all** — mark everything done (disables when already complete)
+- **keyboard shortcuts** — `⌘K` focus input, `⌘⇧L` toggle theme
+- **dynamic tab title** — shows remaining task count: `(3) my tasks`
 - **timestamps** — each task shows when it was created
-- **custom checkboxes** — styled replacements for browser defaults with teal fill + checkmark
-- **strikethrough** — completed tasks get muted text + line-through
-- **completion counter** — status bar shows `n / total completed`
-- **system theme** — dark by default, respects `prefers-color-scheme: light`
-- **empty state** — friendly message when no tasks exist
+- **custom checkboxes** — styled replacements with teal fill + checkmark
+- **entry animations** — tasks slide in on creation
+- **empty state** — starts clean, no demo data
 
 ## structure
 
 ```
 src/
 ├── components/
-│   ├── AddTaskForm.jsx   # input + add button
-│   ├── TaskList.jsx      # task list + status bar + complete all
-│   ├── TaskItem.jsx      # card with custom checkbox, text, delete
-│   ├── Header.jsx        # title
+│   ├── AddTaskForm.jsx   # input + priority picker + add button
+│   ├── TaskList.jsx      # dnd-kit sortable list + status bar + actions
+│   ├── TaskItem.jsx      # draggable card with checkbox, priority, delete
+│   ├── Header.jsx        # title + theme toggle
 │   └── Footer.jsx        # credits
+├── hooks/
+│   ├── useTheme.js       # dark/light toggle with localStorage
+│   └── useKeyboardShortcuts.js
 ├── reducers/
-│   └── tasks.js          # redux slice — add, toggle, delete, completeAll
-├── App.jsx               # store provider + layout shell
-├── index.css             # theme tokens, reset, light theme
+│   └── tasks.js          # redux slice — add, toggle, delete, reorder, clearCompleted
+├── store.js              # configureStore + localStorage middleware
+├── App.jsx               # provider shell, tab title, context
+├── index.css             # theme tokens, animations, reset
 └── main.jsx              # entry point
 ```
 

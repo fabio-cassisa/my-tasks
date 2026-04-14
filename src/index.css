@@ -1,6 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap");
 
-/* ── theme tokens ── */
+/* ── theme tokens (dark default) ── */
 :root {
   --bg-primary: #0a0a0f;
   --bg-secondary: #12121a;
@@ -17,6 +17,14 @@
   --danger: #f87171;
   --danger-hover: #ef4444;
   --danger-dim: rgba(248, 113, 113, 0.12);
+  --warning: #fbbf24;
+  --warning-dim: rgba(251, 191, 36, 0.12);
+  --priority-high: #f87171;
+  --priority-high-dim: rgba(248, 113, 113, 0.12);
+  --priority-med: #fbbf24;
+  --priority-med-dim: rgba(251, 191, 36, 0.12);
+  --priority-low: #60a5fa;
+  --priority-low-dim: rgba(96, 165, 250, 0.12);
   --border: #2a2a3a;
   --border-done: #1e3a32;
   --shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
@@ -28,27 +36,33 @@
 }
 
 /* ── light theme ── */
-@media (prefers-color-scheme: light) {
-  :root {
-    --bg-primary: #f5f5f5;
-    --bg-secondary: #ffffff;
-    --bg-card: #ffffff;
-    --bg-card-done: #f0faf7;
-    --bg-hover: #f0f0f0;
-    --text-primary: #1a1a2e;
-    --text-secondary: #555566;
-    --text-muted: #888899;
-    --text-done: #7aaa98;
-    --accent: #0d9488;
-    --accent-hover: #0f766e;
-    --accent-dim: rgba(13, 148, 136, 0.08);
-    --danger: #ef4444;
-    --danger-hover: #dc2626;
-    --danger-dim: rgba(239, 68, 68, 0.08);
-    --border: #e2e2e8;
-    --border-done: #c8e6dc;
-    --shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
-  }
+[data-theme="light"] {
+  --bg-primary: #f5f5f5;
+  --bg-secondary: #ffffff;
+  --bg-card: #ffffff;
+  --bg-card-done: #f0faf7;
+  --bg-hover: #f0f0f0;
+  --text-primary: #1a1a2e;
+  --text-secondary: #555566;
+  --text-muted: #888899;
+  --text-done: #7aaa98;
+  --accent: #0d9488;
+  --accent-hover: #0f766e;
+  --accent-dim: rgba(13, 148, 136, 0.08);
+  --danger: #ef4444;
+  --danger-hover: #dc2626;
+  --danger-dim: rgba(239, 68, 68, 0.08);
+  --warning: #d97706;
+  --warning-dim: rgba(217, 119, 6, 0.08);
+  --priority-high: #ef4444;
+  --priority-high-dim: rgba(239, 68, 68, 0.08);
+  --priority-med: #d97706;
+  --priority-med-dim: rgba(217, 119, 6, 0.08);
+  --priority-low: #3b82f6;
+  --priority-low-dim: rgba(59, 130, 246, 0.08);
+  --border: #e2e2e8;
+  --border-done: #c8e6dc;
+  --shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
 }
 
 /* ── reset ── */
@@ -67,4 +81,22 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   min-height: 100vh;
+  transition: background-color var(--transition), color var(--transition);
+}
+
+/* ── animations ── */
+@keyframes taskIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }

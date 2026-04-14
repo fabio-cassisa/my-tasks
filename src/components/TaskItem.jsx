@@ -1,6 +1,8 @@
 import styled from "styled-components";
 import { useDispatch } from "react-redux";
 import { toggleTask, deleteTask } from "../reducers/tasks";
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 import { format, parseISO } from "date-fns";
 
 const Card = styled.div`
@@ -9,13 +11,38 @@ const Card = styled.div`
   gap: 12px;
   padding: 14px;
   margin-bottom: 8px;
-  background: ${(props) => (props.$complete ? "var(--bg-card-done)" : "var(--bg-card)")};
-  border: 1px solid ${(props) => (props.$complete ? "var(--border-done)" : "var(--border)")};
+  background: ${(props) =>
+    props.$complete ? "var(--bg-card-done)" : "var(--bg-card)"};
+  border: 1px solid
+    ${(props) => (props.$complete ? "var(--border-done)" : "var(--border)")};
   border-radius: var(--radius);
   transition: all var(--transition);
+  animation: taskIn 0.25s ease-out;
 
   &:hover {
-    background: ${(props) => (props.$complete ? "var(--bg-card-done)" : "var(--bg-hover)")};
+    background: ${(props) =>
+      props.$complete ? "var(--bg-card-done)" : "var(--bg-hover)"};
+  }
+`;
+
+const DragHandle = styled.span`
+  display: flex;
+  align-items: center;
+  cursor: grab;
+  color: var(--text-muted);
+  font-size: 14px;
+  flex-shrink: 0;
+  opacity: 0.4;
+  transition: opacity var(--transition);
+  user-select: none;
+  touch-action: none;
+
+  ${Card}:hover & {
+    opacity: 0.8;
+  }
+
+  &:active {
+    cursor: grabbing;
   }
 `;
 
@@ -41,7 +68,8 @@ const StyledCheckbox = styled.span`
   width: 22px;
   height: 22px;
   border-radius: var(--radius-sm);
-  border: 2px solid ${(props) => (props.$checked ? "var(--accent)" : "var(--border)")};
+  border: 2px solid
+    ${(props) => (props.$checked ? "var(--accent)" : "var(--border)")};
   background: ${(props) => (props.$checked ? "var(--accent)" : "transparent")};
   display: flex;
   align-items: center;
@@ -70,16 +98,30 @@ const TaskText = styled.span`
   font-size: 15px;
   line-height: 1.4;
   overflow-wrap: break-word;
-  color: ${(props) => (props.$complete ? "var(--text-done)" : "var(--text-primary)")};
+  color: ${(props) =>
+    props.$complete ? "var(--text-done)" : "var(--text-primary)"};
   text-decoration: ${(props) => (props.$complete ? "line-through" : "none")};
   transition: color var(--transition);
 `;
 
-const TaskDate = styled.span`
+const MetaRow = styled.span`
   font-size: 12px;
   color: var(--text-muted);
   margin-top: 2px;
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+`;
+
+const PriorityBadge = styled.span`
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 1px 6px;
+  border-radius: 3px;
+  color: ${(props) => `var(--priority-${props.$priority})`};
+  background: ${(props) => `var(--priority-${props.$priority}-dim)`};
 `;
 
 const DeleteButton = styled.button`
@@ -102,11 +144,31 @@ const DeleteButton = styled.button`
   }
 `;
 
+const PRIORITY_LABELS = { high: "high", med: "med", low: "low" };
+
 const TaskItem = ({ task }) => {
   const dispatch = useDispatch();
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: task.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+    zIndex: isDragging ? 10 : "auto",
+  };
 
   return (
-    <Card $complete={task.complete}>
+    <Card ref={setNodeRef} style={style} $complete={task.complete}>
+      <DragHandle {...attributes} {...listeners}>
+        ⠿
+      </DragHandle>
       <CheckboxWrapper>
         <HiddenCheckbox
           type="checkbox"
@@ -117,7 +179,14 @@ const TaskItem = ({ task }) => {
       </CheckboxWrapper>
       <TextGroup>
         <TaskText $complete={task.complete}>{task.text}</TaskText>
-        <TaskDate>{format(parseISO(task.createdAt), "MMM d, HH:mm")}</TaskDate>
+        <MetaRow>
+          {task.priority && (
+            <PriorityBadge $priority={task.priority}>
+              {PRIORITY_LABELS[task.priority]}
+            </PriorityBadge>
+          )}
+          <span>{format(parseISO(task.createdAt), "MMM d, HH:mm")}</span>
+        </MetaRow>
       </TextGroup>
       <DeleteButton onClick={() => dispatch(deleteTask(task.id))}>
         Delete
